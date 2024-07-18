@@ -1,15 +1,19 @@
 import { LitElement, html } from 'lit';
 
+export const STATUS = ["(VISITED)", "(NOT_VISITED)"];
+
 export class BreweryDetail extends LitElement {
   static get properties() {
     return {
-      brewery: { type: Object }
+      brewery: { type: Object },
+      _visited: { type: Boolean}
     }
   }
   constructor() {
     super();
 
     this.brewery = {};
+    this._visited = false;
   }
 
   get _name(){
@@ -20,8 +24,27 @@ export class BreweryDetail extends LitElement {
     return this.brewery?.brewery_type ?? '';
   }
 
+  get _status(){
+    return html`
+      ${this._visited ? STATUS[0] : STATUS[1]}
+    `;
+  }
+
   get _city(){
     return this.brewery?.city ?? '';
+  }
+
+  /**conditional templating!! MUST HAVE _html``_!!! */
+  get _statusAndName(){
+    return html`${this._status} ${this._name}`;
+  }
+
+  get _changeVisibleBtn(){
+    return html`
+      <button
+        @click=${this._toggleVisited}
+      >Togle Visited</button>
+    `;
   }
 
   connectedCallback() {
@@ -29,10 +52,14 @@ export class BreweryDetail extends LitElement {
   }
 
 
-
   render() {
-    return html` ${this._name}, ${this._type},  ${this._city},  
+    return html` ${this._statusAndName}| ${this._type}|  ${this._city}
+      ${this._changeVisibleBtn} 
     `;
+  }
+
+  _toggleVisited(){
+    this._visited = !this._visited;
   }
 }
 
