@@ -17,15 +17,13 @@ export class ApiFetch extends LitElement {
   constructor() {
     super();
 
-    this._visited = 0;
-    this._notVisited = 0;
-
+    this.breweries= [];
   }
 
   connectedCallback() {
     super.connectedCallback();
 
-    if (!this.breweries) {
+    if (this.breweries.length === 0) {
       this.fetchBreweries();
     }
   }
@@ -36,7 +34,7 @@ export class ApiFetch extends LitElement {
     const jsonResponse = await response.json();
     this.breweries = jsonResponse;
     this._isLoading = false;
-    this._notVisited = this.breweries.length;
+    console.log(this._visited, this._notVisited);
   }
 
   get _listBreweries() {
@@ -47,12 +45,24 @@ export class ApiFetch extends LitElement {
               <li>
                 <brewery-detail 
                   .brewery=${brewery}
-                  @toggle-visited=${this._toggleVisited}
+                  @toggle-visited=${(e)=>this._toggleVisited(e, brewery)}
                 ></brewery-detail>
               </li>
           `;
         })}
       </ul>
+    `;
+  }
+
+  get _visited(){
+    return html`
+      ${this.breweries.filter(b => !b.visited).length}
+    `;
+  }
+
+  get _notVisited(){
+    return html`
+      ${this.breweries.length - this.breweries.filter(b => !b.visited).length}
     `;
   }
 
@@ -68,15 +78,15 @@ export class ApiFetch extends LitElement {
     `;
   }
 
-  _toggleVisited(e){
+  _toggleVisited(e, breweryToUpdate){
+    //we using map because we need to mutate array
+    //toogle only in the given brewery(we go through all)
     if(e && e.detail){
-      if(e.detail.visited){
-        this._visited += 1;
-        this._notVisited -= 1;
-      }else{
-        this._visited -= 1;
-        this._notVisited += 1;
-      }
+      this.breweries = this.breweries.map(brewery =>{
+        return brewery === breweryToUpdate ? 
+          {...brewery, visited: !brewery.visited }
+          : brewery;
+      });
     }
   }
 }
