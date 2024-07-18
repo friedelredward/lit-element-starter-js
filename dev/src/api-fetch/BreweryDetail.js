@@ -56,6 +56,7 @@ export class BreweryDetail extends LitElement {
 
 
   render() {
+    console.log("is visited", this._city, this._visited);
     return html` ${this._statusAndName}| ${this._type}|  ${this._city}
       ${this._changeVisibleBtn} 
     `;

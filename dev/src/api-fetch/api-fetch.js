@@ -17,7 +17,8 @@ export class ApiFetch extends LitElement {
   constructor() {
     super();
 
-    this.breweries= [];
+    this.breweries = [];
+    this._totalBreweries = [];
   }
 
   connectedCallback() {
@@ -33,36 +34,36 @@ export class ApiFetch extends LitElement {
     const response = await fetch(APIEndpoint);
     const jsonResponse = await response.json();
     this.breweries = jsonResponse;
+    this._totalBreweries = this.breweries;
     this._isLoading = false;
-    console.log(this._visited, this._notVisited);
   }
 
   get _listBreweries() {
     return html`
       <ul>
-        ${this.breweries.map(brewery => {
-          return html`
+        ${this.breweries.map((brewery, index) => {
+      return html`
               <li>
                 <brewery-detail 
                   .brewery=${brewery}
-                  @toggle-visited=${(e)=>this._toggleVisited(e, brewery)}
+                  @toggle-visited=${(e) => this._toggleVisited(e, brewery, index)}
                 ></brewery-detail>
               </li>
           `;
-        })}
+    })}
       </ul>
     `;
   }
 
-  get _visited(){
+  get _visited() {
     return html`
-      ${this.breweries.filter(b => !b.visited).length}
+      ${this.breweries.filter(b => b.visited).length}
     `;
   }
 
-  get _notVisited(){
+  get _notVisited() {
     return html`
-      ${this.breweries.length - this.breweries.filter(b => !b.visited).length}
+      ${this.breweries.length - this.breweries.filter(b => b.visited).length}
     `;
   }
 
@@ -72,22 +73,39 @@ export class ApiFetch extends LitElement {
     }
     return html` 
     <h2>Breweries list</h2>
-    ${this._listBreweries}
+    <button @click=${this._showAll}>Show all</button>
+    <button @click=${this._showVisited}>Show visited</button>
+    <button @click=${this._showNotVisited}>Show NOT visited</button>
     <p> Total Visited : ${this._visited}</p>
     <p> NOT Visited : ${this._notVisited}</p>
+    ${this._listBreweries}
     `;
   }
 
-  _toggleVisited(e, breweryToUpdate){
+  _toggleVisited(e, breweryToUpdate, index) {
     //we using map because we need to mutate array
     //toogle only in the given brewery(we go through all)
-    if(e && e.detail){
-      this.breweries = this.breweries.map(brewery =>{
-        return brewery === breweryToUpdate ? 
-          {...brewery, visited: !brewery.visited }
+    if (e && e.detail) {
+      this.breweries = this.breweries.map(brewery => {
+        return brewery === breweryToUpdate ?
+          { ...brewery, visited: !brewery.visited }
           : brewery;
       });
+
+      this._totalBreweries[index].visited = !breweryToUpdate.visited;
     }
+  }
+
+  _showAll() {
+    this.breweries =  [...this._totalBreweries];
+  }
+
+  _showVisited(){
+    this.breweries= [...this._totalBreweries.filter(b=> b.visited)];
+  }
+
+  _showNotVisited(){
+    this.breweries= [...this._totalBreweries.filter(b=> !b.visited)];
   }
 }
 
