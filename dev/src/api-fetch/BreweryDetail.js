@@ -2,6 +2,9 @@ import { LitElement, html } from 'lit';
 
 export const STATUS = ["(VISITED)", "(NOT_VISITED)"];
 
+/**
+ * @fires toggle-visited - Indicates when the visited status changes
+ */
 export class BreweryDetail extends LitElement {
   static get properties() {
     return {
@@ -60,6 +63,11 @@ export class BreweryDetail extends LitElement {
 
   _toggleVisited(){
     this._visited = !this._visited;
+    this._emitVisitedToogle();
+  }
+
+  _emitVisitedToogle(){
+    this.dispatchEvent(new CustomEvent('toggle-visited', {detail:{visited: this._visited}}));
   }
 }
 
