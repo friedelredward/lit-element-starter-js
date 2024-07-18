@@ -9,14 +9,12 @@ export class BreweryDetail extends LitElement {
   static get properties() {
     return {
       brewery: { type: Object },
-      _visited: { type: Boolean}
     }
   }
   constructor() {
     super();
 
     this.brewery = {};
-    this._visited = false;
   }
 
   get _name(){
@@ -29,7 +27,7 @@ export class BreweryDetail extends LitElement {
 
   get _status(){
     return html`
-      ${this._visited ? STATUS[0] : STATUS[1]}
+      ${this.brewery.visited ? STATUS[0] : STATUS[1]}
     `;
   }
 
@@ -57,13 +55,12 @@ export class BreweryDetail extends LitElement {
 
   render() {
     console.log("is visited", this._city, this._visited);
-    return html` ${this._statusAndName}| ${this._type}|  ${this._city}
+    return html` ${this._statusAndName} | ${this._type} |  ${this._city}
       ${this._changeVisibleBtn} 
     `;
   }
 
   _toggleVisited(){
-    this._visited = !this._visited;
     this._emitVisitedToogle();
   }
 
