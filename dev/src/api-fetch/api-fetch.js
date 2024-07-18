@@ -1,4 +1,6 @@
 import {LitElement, html, css} from 'lit';
+//import { BreweryDetail } from './BreweryDetail';
+import './BreweryDetail';
 
 const APIEndpoint = 'https://api.openbrewerydb.org/breweries';
 /**
@@ -38,7 +40,18 @@ export class ApiFetch extends LitElement {
     if(this._isLoading){
       return html`<p>plaholder for loading json....</p>`;
     }
-    return html` <pre>${JSON.stringify(this.breweries, null, 2)}</pre> `;
+    return html` 
+    <h2>Breweries list</h2>
+    <ul>
+      ${this.breweries.map(brewery =>{
+        return html`
+          <li>
+            <brewery-detail .brewery=${brewery}></brewery-detail>
+          </li>
+        `;
+      })}
+    </ul>
+    `;
   }
 }
 
